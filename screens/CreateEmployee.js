@@ -47,19 +47,39 @@ const CreateEmployee = () => {
             onChangeText={text=>setSalary(text)}
             />
 
-            <Button icon="upload" mode="contained" onPress={()=> setModal(true)}>
-                Camera
+            <Button icon="upload"
+             style={styles.inputstyle}
+             mode="contained" 
+             theme={theme}
+             onPress={()=> setModal(true)}>
+                Upload Image
+            </Button>
+            <Button icon="upload"
+             style={styles.inputstyle}
+             mode="contained" 
+             icon="content-save"
+             theme={theme}
+             onPress={()=> console.log("save")}>
+                save
             </Button>
             <Modal
             animationType="slide"
-            transparent={false}
+            transparent={true}
             visible={modal}
             onRequestClose={()=> setModal(false)}
             >
-                <View>
-                <Button icon="camera" mode="contained" onPress={()=> setModal(false)}>
-                Cancel
-                </Button>
+                <View style={styles.modalView}>
+                    <View style={styles.modalButtonView}>
+                        <Button icon="camera" mode="contained" theme={theme} onPress={()=> setModal(false)}>
+                        Camera
+                        </Button>
+                        <Button icon="image-area" mode="contained" theme={theme} onPress={()=> setModal(false)}>
+                        Gallery
+                        </Button>
+                    </View>
+                    <Button theme={theme} onPress={()=> setModal(false)}>
+                    Cancel
+                    </Button>
                 </View>
             </Modal>
         </View>
@@ -78,6 +98,16 @@ const styles = StyleSheet.create({
     },
     inputstyle:{
         margin:6
+    },
+    modalView:{
+        position:"absolute",
+        bottom:2,
+        width:"100%"
+    },
+    modalButtonView:{
+        flexDirection:"row",
+        justifyContent:"space-around",
+        padding:10
     }
 })
 
