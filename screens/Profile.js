@@ -5,9 +5,10 @@ import { Title, Card, Button } from 'react-native-paper'
 import { MaterialIcons, Entypo } from '@expo/vector-icons';
 
 
-const Profile = () => {
+const Profile = (props) => {
 
 
+    const {id, name, email,position, salary, phone, picture} = props.route.params.item
     const openDialer = () => {
         if(Platform.OS === "android"){
             Linking.openURL("tel:12345678")
@@ -25,25 +26,25 @@ const Profile = () => {
             <View style={{alignItems:"center"}}>
                 <Image
                 style={{width:150,height:150,borderRadius:75, marginTop:-50}}
-                source={{uri:"https://pbs.twimg.com/profile_images/997201952105680896/nnSOgxBq_400x400.jpg"}}
+                source={{uri:picture}}
                 />
             </View>
             <View style={{alignItems:"center", margin:15}}>
-                <Title>Rajvardhan Singh Thakur</Title>
-                <Text style={{fontSize:15}}>Web Developer</Text>
+                <Title>{name}</Title>
+                <Text style={{fontSize:15}}>{position}</Text>
             </View>
 
             <Card style={styles.myCard}
             onPress={() => Linking.openURL("mailto:devraj231@gmail.com")}>
                 <View style={styles.cardContent}>
                     <MaterialIcons name="email" size={32} color="#0394fc" />
-                    <Text style={styles.myText}>devraj231@gmail.com</Text>
+    <Text style={styles.myText}>{email}</Text>
                 </View>
             </Card>
             <Card style={styles.myCard} onPress={()=> openDialer()}>
                 <View style={styles.cardContent}>
                     <Entypo name="phone" size={32} color="#0394fc" />
-                    <Text style={styles.myText}>12345678</Text>
+                    <Text style={styles.myText}>{phone}</Text>
                 </View>
             </Card>
             <Card style={styles.myCard}>
