@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, Modal, Image, Linking, Platform } from 'react-native';
+import { StyleSheet, Text, View, Modal, Image, Linking, Platform, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'
 import { Title, Card, Button } from 'react-native-paper'
 import { MaterialIcons, Entypo } from '@expo/vector-icons';
@@ -8,12 +8,34 @@ import { MaterialIcons, Entypo } from '@expo/vector-icons';
 const Profile = (props) => {
 
 
-    const {id, name, email,position, salary, phone, picture} = props.route.params.item
+    const {_id, name, email,position, salary, phone, picture} = props.route.params.item
+
+
+    const deleteEmployee = () => {
+        fetch("http://60bd7640b98c.ngrok.io/delete", {
+            method:"post",
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({
+                id:_id
+            })
+        })
+        .then(res => res.json())
+        .then(deleteEmp => {
+            Alert.alert(`${deleteEmp.name} deleted`)
+            props.navigation.navigate("Home")
+        })
+        .catch(err=>{
+            Alert.alert("Something went wrong")
+        })
+    }
+
     const openDialer = () => {
         if(Platform.OS === "android"){
-            Linking.openURL("tel:12345678")
+            Linking.openURL(`tel:${phone}`)
         }else{
-            Linking.openURL("telprompt:12345678")
+            Linking.openURL(`telprompt:${phone}`)
         }
     }
 
@@ -35,7 +57,7 @@ const Profile = (props) => {
             </View>
 
             <Card style={styles.myCard}
-            onPress={() => Linking.openURL("mailto:devraj231@gmail.com")}>
+            onPress={() => Linking.openURL(`mailto:${email}`)}>
                 <View style={styles.cardContent}>
                     <MaterialIcons name="email" size={32} color="#0394fc" />
     <Text style={styles.myText}>{email}</Text>
@@ -58,13 +80,16 @@ const Profile = (props) => {
                 <Button icon="account-edit" 
                 mode="contained" 
                 theme={theme}
-                onPress={() => console.log("Edit Profile")}>
+                onPress={() => {
+                    props.navigation.navigate("Create",
+                    {_id, name, email,position, salary, phone, picture})}
+                    }>
                     Edit
                 </Button>
                 <Button icon="delete" 
                 mode="contained" 
                 theme={theme}
-                onPress={() => console.log("Edit Profile")}>
+                onPress={() => deleteEmployee()}>
                     Fire Employee
                 </Button>
             </View>

@@ -1,31 +1,42 @@
-import React from 'react';
-import { StyleSheet, Text, View, Image, FlatList } from 'react-native';
+import React,{useEffect, useState} from 'react';
+import { StyleSheet, Text, View, Image, FlatList, Alert} from 'react-native';
 import {Card, FAB}  from 'react-native-paper';
 
 
 
-function Home(props){
+const Home = ({navigation}) => {
 
-    const data = [
-        {id:"1", name:"Gilfoyle",email:"abc@gmail.com",salary:"40 LPA",phone:"1234567", position:"Data Scientist", picture:"https://pbs.twimg.com/profile_images/997201952105680896/nnSOgxBq_400x400.jpg"},
-        {id:"2", name:"Jing Yang",email:"abc@gmail.com",salary:"40 LPA",phone:"1234567", position:"Data Scientist", picture:"https://pbs.twimg.com/profile_images/997201952105680896/nnSOgxBq_400x400.jpg"},
-        {id:"3", name:"Erlic",email:"abc@gmail.com",salary:"40 LPA",phone:"1234567", position:"Data Scientist", picture:"https://pbs.twimg.com/profile_images/997201952105680896/nnSOgxBq_400x400.jpg"},
-        {id:"4", name:"Gavin",email:"abc@gmail.com",salary:"40 LPA",phone:"1234567", position:"Data Scientist", picture:"https://pbs.twimg.com/profile_images/997201952105680896/nnSOgxBq_400x400.jpg"},
-        
-        
-    ]
+    
+    const [data, setData] = useState([])
+    const [loading, setLoading] = useState(true)
+
+
+    const fetchData = () => {
+        fetch("http://60bd7640b98c.ngrok.io/")
+        .then(res=>res.json())
+        .then(resultData=>{
+            setData(resultData)
+            setLoading(false)
+        }).catch(err=>{
+            Alert.alert("Something went wrong")
+        })
+    }
+
+    useEffect(()=>{
+       fetchData()
+    },[])
 
     const renderList = ((item)=>{
         return (
-        <Card style={styles.mycard} onPress={()=> props.navigation.navigate("Profile", {item:item})}>
+        <Card style={styles.mycard} onPress={()=> navigation.navigate("Profile", {item:item})}>
             <View style={styles.cardView}>
                 <Image
                 style={{width:70,height:70,borderRadius:50/2}}
-                source={{uri:"https://pbs.twimg.com/profile_images/997201952105680896/nnSOgxBq_400x400.jpg"}}
+                source={{uri:item.picture}}
                 />
                 <View style={{marginLeft:10}}>
-                    <Text style={styles.text}>{item.name}</   Text>
-                    <Text style={styles.text}>{item.position}</   Text>
+                    <Text style={styles.text}>{item.name}</ Text>
+                    <Text style={styles.text}>{item.position}</Text>
                 </View>
             </View>
         </Card>
@@ -33,16 +44,18 @@ function Home(props){
     })
 
     return (
-        <View style={{flex:1}}> 
-           <FlatList 
-           data={data}
-           renderItem={({item}) => {
-               return renderList(item)
-           }}
-           keyExtractor={item=> item.id}
-           />
+        <View style={{flex:1}}>
+            <FlatList 
+                data={data}
+                renderItem={({item}) => {
+                    return renderList(item)
+                }}
+                keyExtractor={item=> item._id}
+                onRefresh={() => fetchData()}
+                refreshing={loading}
+            />
            <FAB
-           onPress={()=> props.navigation.navigate("Create")}
+           onPress={()=> navigation.navigate("Create")}
            style={styles.fab}
            small={false}
            icon="plus"

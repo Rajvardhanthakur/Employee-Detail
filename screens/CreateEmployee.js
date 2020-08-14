@@ -1,22 +1,43 @@
 import React, {useState} from 'react';
-import { StyleSheet, Text, View, Modal, Alert } from 'react-native';
+import { StyleSheet, Text, View, Modal, Alert, KeyboardAvoidingView } from 'react-native';
 import { TextInput, Button } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 
-const CreateEmployee = () => {
+const CreateEmployee = ({navigation, route}) => {
     
-    const [name, setName] =useState("")
-    const [phone, setPhone] =useState("")
-    const [email, setEmail] =useState("")
-    const [salary, setSalary] =useState("")
-    const [picture, setPicture] =useState("")
-    const [position, setPosition] = useState("")
+
+    const getDetails = (type) =>{
+        if(route.params){
+            switch(type){
+                case "name":
+                    return route.params.name
+                case "phone":
+                    return route.params.phone
+                case "email":
+                    return route.params.email
+                case "salary":
+                    return route.params.salary
+                case "picture":
+                    return route.params.picture
+                case "position":
+                    return route.params.position
+            }
+        }
+        return ""
+    }
+
+    const [name, setName] =useState(getDetails("name"))
+    const [phone, setPhone] =useState(getDetails("phone"))
+    const [email, setEmail] =useState(getDetails("email"))
+    const [salary, setSalary] =useState(getDetails("salary"))
+    const [picture, setPicture] =useState(getDetails("picture"))
+    const [position, setPosition] = useState(getDetails("position"))
     const [modal, setModal] =useState(false)
     
 
     const sendData = () =>{
-        fetch("http://f2cf48f28da5.ngrok.io/send-data",{
+        fetch("http://60bd7640b98c.ngrok.io/send-data",{
             method:"post",
             headers:{
                 'Content-Type': "application/json"
@@ -32,8 +53,11 @@ const CreateEmployee = () => {
         })
         .then(res=>res.json())
         .then(data=>{
-            console.log(data)
-        })        
+            Alert.alert(`${data.name} is employeer now`)
+            navigation.navigate("Home")
+        }).catch(err=>{
+            Alert.alert('Something went wrong')
+        })      
     }
 
     const pickFromGallery = async () => {
@@ -98,6 +122,31 @@ const CreateEmployee = () => {
             console.log(data)
             setPicture(data.url)
             setModal(false)
+        }).catch(err=>{
+            Alert.alert('Something went wrong')
+        })
+    }
+
+    const updateData = () =>{
+        fetch("http://60bd7640b98c.ngrok.io/update",{
+            method:"post",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                id:route.params._id,
+                name, 
+                email,
+                phone,
+                salary,
+                picture,
+                position
+            })
+        })
+        .then(res => res.json())
+        .then(data=>{
+            Alert.alert(`${data.name} is updated`)
+            navigation.navigate("Home")
         })
     }
 
@@ -152,14 +201,26 @@ const CreateEmployee = () => {
              onPress={()=> setModal(true)}>
                 Upload Image
             </Button>
-            <Button icon="upload"
-             style={styles.inputstyle}
-             mode="contained" 
-             icon="content-save"
-             theme={theme}
-             onPress={()=> sendData()}>
-                save
-            </Button>
+            {
+                route.params?
+                <Button icon="upload"
+                style={styles.inputstyle}
+                mode="contained" 
+                icon="content-save"
+                theme={theme}
+                onPress={()=> updateData()}>
+                    Update
+                </Button>
+                :
+                <Button icon="upload"
+                style={styles.inputstyle}
+                mode="contained" 
+                icon="content-save"
+                theme={theme}
+                onPress={()=> sendData()}>
+                    save
+                </Button>
+            }
             <Modal
             animationType="slide"
             transparent={true}
