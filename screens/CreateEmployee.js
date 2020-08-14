@@ -34,7 +34,7 @@ const CreateEmployee = ({navigation, route}) => {
     const [picture, setPicture] =useState(getDetails("picture"))
     const [position, setPosition] = useState(getDetails("position"))
     const [modal, setModal] =useState(false)
-    
+    const [enableShift, setEnableShift] = useState(false)
 
     const sendData = () =>{
         fetch("http://60bd7640b98c.ngrok.io/send-data",{
@@ -151,12 +151,14 @@ const CreateEmployee = ({navigation, route}) => {
     }
 
     return (
-        <View style={styles.root}>
+        <KeyboardAvoidingView behavior="position" style={styles.root} enabled={enableShift}>
+        <View>
             <TextInput
             label="Name"
             mode="outlined"
             style={styles.inputstyle}
             theme={theme}
+            onFocus={()=> setEnableShift(false)}
             value={name}
             onChangeText={text=>setName(text)}
             />
@@ -165,6 +167,7 @@ const CreateEmployee = ({navigation, route}) => {
             mode="outlined"
             style={styles.inputstyle}
             theme={theme}
+            onFocus={()=> setEnableShift(false)}
             value={email}
             onChangeText={text=>setEmail(text)}
             />
@@ -174,6 +177,7 @@ const CreateEmployee = ({navigation, route}) => {
             style={styles.inputstyle}
             theme={theme}
             value={phone}
+            onFocus={()=> setEnableShift(false)}
             keyboardType="number-pad"
             onChangeText={text=>setPhone(text)}
             />
@@ -182,6 +186,7 @@ const CreateEmployee = ({navigation, route}) => {
             mode="outlined"
             style={styles.inputstyle}
             theme={theme}
+            onFocus={()=> setEnableShift(true)}
             value={salary}
             onChangeText={text=>setSalary(text)}
             />
@@ -190,6 +195,7 @@ const CreateEmployee = ({navigation, route}) => {
             mode="outlined"
             style={styles.inputstyle}
             theme={theme}
+            onFocus={()=> setEnableShift(true)}
             value={position}
             onChangeText={text=>setPosition(text)}
             />
@@ -242,6 +248,7 @@ const CreateEmployee = ({navigation, route}) => {
                 </View>
             </Modal>
         </View>
+        </KeyboardAvoidingView>
     )
 }
 
