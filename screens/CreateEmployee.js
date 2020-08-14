@@ -11,8 +11,30 @@ const CreateEmployee = () => {
     const [email, setEmail] =useState("")
     const [salary, setSalary] =useState("")
     const [picture, setPicture] =useState("")
+    const [position, setPosition] = useState("")
     const [modal, setModal] =useState(false)
     
+
+    const sendData = () =>{
+        fetch("http://f2cf48f28da5.ngrok.io/send-data",{
+            method:"post",
+            headers:{
+                'Content-Type': "application/json"
+            },
+            body:JSON.stringify({
+                name,
+                email,
+                phone,
+                picture,
+                salary,
+                position
+            })
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            console.log(data)
+        })        
+    }
 
     const pickFromGallery = async () => {
         const {granted} = await Permissions.askAsync(Permissions.CAMERA_ROLL)
@@ -114,6 +136,14 @@ const CreateEmployee = () => {
             value={salary}
             onChangeText={text=>setSalary(text)}
             />
+             <TextInput
+            label="Position"
+            mode="outlined"
+            style={styles.inputstyle}
+            theme={theme}
+            value={position}
+            onChangeText={text=>setPosition(text)}
+            />
 
             <Button icon={picture==""?"upload":"check"}
              style={styles.inputstyle}
@@ -127,7 +157,7 @@ const CreateEmployee = () => {
              mode="contained" 
              icon="content-save"
              theme={theme}
-             onPress={()=> console.log("save")}>
+             onPress={()=> sendData()}>
                 save
             </Button>
             <Modal

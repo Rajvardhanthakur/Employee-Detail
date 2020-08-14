@@ -46,7 +46,7 @@ app.post('/send-data',(req, res)=>{
     })
     employee.save().then(data => {
         console.log(data)
-        res.send("successfully posted")
+        res.send(data)
     }).catch(err=>{
         console.log(err)
     })
